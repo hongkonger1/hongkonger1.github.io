@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="metaTitle">香港支票助手 | 數字轉英文中文大寫工具 Cheque Converter | 安全免費</title>
+    <meta id="metaDesc" name="description" content="最安全的香港支票金額轉換工具。一鍵將阿拉伯數字轉換為銀行標準支票英文及中文大寫（花紅/薪金/商業支票專用），符合香港各大銀行標準。">
+    <meta name="keywords" content="支票英文, 支票中文大寫, 數字轉英文, 支票寫法, 港幣大寫, Cheque converter">
+    <meta name="robots" content="index, follow">
+    
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        .ad-placeholder { background: #f3f4f6; border: 2px dashed #d1d5db; text-align: center; padding: 15px; color: #9ca3af; }
+        .cheque-bg { background-color: #f7f9fa; border: 2px solid #cbd5e1; background-image: radial-gradient(#e2e8f0 1px, transparent 0); background-size: 8px 8px; }
+        /* 提升 SEO 閱讀體驗的樣式 */
+        .seo-text h3 { color: #1e3a8a; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.5rem; font-size: 1.1rem; }
+        .seo-text p { margin-bottom: 0.75rem; line-height: 1.6; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <!-- 導航欄 -->
+    <header class="bg-blue-600 text-white shadow-md p-4">
+        <div class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 id="navTitle" class="text-xl font-bold">SmartTools HK 智能工具站</h1>
+                <p id="navSub" class="text-xs text-blue-200">香港商業支票極速版 (v2.1)</p>
+            </div>
+            
+            <!-- 右上角多語言切換 -->
+            <div class="flex bg-blue-700 p-1 rounded-md text-xs font-medium border border-blue-500">
+                <button onclick="switchLang('zh')" id="btn-zh" class="px-3 py-1.5 rounded bg-white text-blue-600 transition">繁體中文</button>
+                <button onclick="switchLang('canton')" id="btn-canton" class="px-3 py-1.5 rounded text-white hover:bg-blue-600 transition">廣東話</button>
+                <button onclick="switchLang('en')" id="btn-en" class="px-3 py-1.5 rounded text-white hover:bg-blue-600 transition">English</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主體內容 -->
+    <main class="max-w-5xl mx-auto p-4 mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- 左側/上方：工具核心區 (佔 2 欄) -->
+        <div class="md:col-span-2 space-y-6">
+            
+            <!-- 工具卡片 -->
+            <article class="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                <h2 id="toolTitle" class="text-lg font-semibold mb-2 text-blue-600">支票金額轉換器 (Number to Cheque Text)</h2>
+                <p id="toolDesc" class="text-xs text-gray-400 mb-4">無需點擊轉換按鈕，輸入數字即時生成結果</p>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label id="inputLabel" class="block text-sm font-medium text-gray-600 mb-1">輸入阿拉伯數字 (HKD $)</label>
+                        <input type="number" id="numInput" oninput="convertCurrency()" placeholder="例如: 12345.60" step="0.01" min="0" max="999999999999"
+                            class="w-full p-3 border border-gray-300 rounded-md text-xl font-semibold text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        
+                        <!-- 快捷金額輔助鍵 -->
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <button onclick="quickAppend(1000)" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-2.5 py-1 rounded border border-gray-200 transition">+1,000</button>
+                            <button onclick="quickAppend(10000)" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-2.5 py-1 rounded border border-gray-200 transition">+10,000</button>
+                            <button onclick="quickDoubleZero()" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-2.5 py-1 rounded border border-gray-200 transition">.00</button>
+                            <button onclick="quickClear()" id="btnClear" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 px-2.5 py-1 rounded border border-red-200 transition ml-auto">清空 Clear</button>
+                        </div>
+                    </div>
+
+                    <!-- 3 欄佈局廣告夾擊區 -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center py-2">
+                        <div class="ad-placeholder text-[10px] py-1.5 h-full flex items-center justify-center">
+                            <p>【AdSense 欄位 1】</p>
+                        </div>
+                        <div class="text-center text-xs text-gray-400 bg-gray-50 py-3 rounded border border-gray-200 border-dashed">
+                            <p id="liveStatus">⚡ 即時同步運算中<br>Live Converting</p>
+                        </div>
+                        <div class="ad-placeholder text-[10px] py-1.5 h-full flex items-center justify-center">
+                            <p>【AdSense 欄位 2】</p>
+                        </div>
+                    </div>
+
+                    <!-- 模擬香港真實支票 UI 預覽區 -->
+                    <div class="cheque-bg p-4 rounded-lg shadow-inner text-xs text-gray-600 font-serif space-y-3 relative overflow-hidden">
+                        <div class="absolute top-2 left-2 tracking-widest text-[10px] uppercase font-sans text-gray-300 select-none">HONG KONG CHEQUE PREVIEW</div>
+                        
+                        <!-- 支票第一列：英文大寫抄寫位 -->
+                        <div class="flex items-end pt-3">
+                            <span class="font-bold mr-2 text-gray-400 font-sans italic">Say:</span>
+                            <div class="flex-1 border-b border-gray-400 pb-0.5 font-mono text-gray-800 text-sm min-h-[20px]" id="previewEn">---</div>
+                        </div>
+
+                        <!-- 支票第二列：中文大寫抄寫位 -->
+                        <div class="flex items-end">
+                            <span class="font-bold mr-2 text-gray-400 font-sans italic">港幣:</span>
+                            <div class="flex-1 border-b border-gray-400 pb-0.5 text-gray-800 text-sm min-h-[20px]" id="previewZh">---</div>
+                        </div>
+
+                        <!-- 複製操控面板 -->
+                        <div class="flex justify-end gap-3 pt-2 font-sans">
+                            <button onclick="copyText('previewEn', 'btnCopyEn')" id="btnCopyEn" class="bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium py-1 px-3 rounded border border-blue-200 transition text-[11px]">
+                                複製英文 Copy English
+                            </button>
+                            <button onclick="copyText('previewZh', 'btnCopyZh')" id="btnCopyZh" class="bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium py-1 px-3 rounded border border-blue-200 transition text-[11px]">
+                                複製中文 Copy Chinese
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </article>
+
+            <!-- 隱私承諾 -->
+            <div class="bg-green-50 border border-green-200 p-4 rounded-lg flex items-start space-x-3">
+                <span class="text-green-600 text-lg">🛡️</span>
+                <div class="text-xs text-green-800">
+                    <p id="secTitle" class="font-bold mb-1">零數據上傳・100% 隱私安全承諾</p>
+                    <p id="secDesc">本工具採用全前端本地運算技術。數據絕不上傳，100% 保證商業隱私安全。</p>
+                </div>
+            </div>
+
+            <!-- SEO 深度知識庫與法律免責區（完全回歸） -->
+            <section class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 seo-text text-sm text-gray-600 space-y-6">
+                <div id="seoContent">
+                    <!-- 由 JavaScript 動態注入高度 SEO 優化的長文 -->
+                </div>
+
+                <div>
+                    <h3 id="tableTitle" class="text-base font-bold text-gray-800 mb-2 border-l-4 border-blue-500 pl-2">🔤 香港銀行標準中文大寫數字對照</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-gray-50 p-3 rounded text-center font-mono text-xs">
+                        <div>1: 壹 (One)</div><div>2: 貳 (Two)</div><div>3: 參 (Three)</div><div>4: 肆 (Four)</div>
+                        <div>5: 伍 (Five)</div><div>6: 陸 (Six)</div><div>7: 柒 (Seven)</div><div>8: 捌 (Eight)</div>
+                        <div>9: 玖 (Nine)</div><div>10: 拾 (Ten)</div><div>百: 佰 (Hundred)</div><div>千: 仟 (Thousand)</div>
+                    </div>
+                </div>
+
+                <div class="text-xs text-gray-400 border-t pt-4">
+                    <p id="disTitle" class="font-bold">⚠️ 免責聲明 (Disclaimer)：</p>
+                    <p id="disDesc">本網站提供之金額轉換結果僅供參考。用戶在簽發銀行支票前，有責任自行核對所有填寫內容之準確性。本站不對因使用本工具而導致的任何彈票、財務損失或法律糾紛承擔任何形式的法律責任。</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- 右側：側邊欄 (廣告) -->
+        <aside class="space-y-6">
+            <div class="ad-placeholder h-[250px] flex flex-col justify-center items-center">
+                <p class="text-xs">【Google AdSense 廣告預留位】</p>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                <h3 id="moreToolsTitle" class="font-bold text-gray-700 mb-2 border-b pb-2">更多實用工具</h3>
+                <p class="text-xs text-gray-400"><a href="salary-tax.htm"> 香港薪俸稅計算機 </a></p>
+            </div>
+        </aside>
+    </main>
+
+    <footer class="max-w-5xl mx-auto p-4 text-center text-xs text-gray-400 mt-12 border-t">
+        &copy; 2026 SmartTools HK. All rights reserved.
+    </footer>
+
+    <script>
+        const langData = {
+            zh: {
+                navTitle: "香港支票助手",
+                toolTitle: "支票金額轉換器 (Number to Cheque Text)",
+                toolDesc: "無需點擊轉換按鈕，輸入數字即時生成結果",
+                inputLabel: "輸入阿拉伯數字 (HKD $)",
+                liveStatus: "⚡ 即時同步運算中<br>Live Converting",
+                secTitle: "零數據上傳・100% 隱私安全承諾",
+                secDesc: "本工具採用全前端本地運算技術。您輸入的任何數字、金額，完全不會上傳到我們的伺服器，整個轉換過程均在您的瀏覽器內完成。",
+                tableTitle: "🔤 香港銀行標準中文大寫數字對照",
+                disTitle: "⚠️ 免責聲明 (Disclaimer)：",
+                disDesc: "本網站提供之金額轉換結果僅供參考。用戶在簽發銀行支票前，有責任自行核對所有填寫內容之準確性。本站不對因使用本工具而導致的任何彈票、財務損失或法律糾紛承擔任何形式的法律責任。",
+                moreToolsTitle: "更多實用工具",
+                btnClear: "清空 Clear",
+                alertValid: "請輸入有效的數字",
+                alertMax: "金額過大，已超出安全處理範圍",
+                alertNegative: "金額不能為負數",
+                seoContent: `<h3>✍️ 填寫香港銀行支票必須注意的事項（避免彈票指南）</h3>
+                             <p>不論是簽發個人還是商業支票，金額的英中大寫填寫都必須完全符合香港各大銀行（如 HSBC 匯豐、中銀、恒生、渣打）的審查標準。以下是三個核心的防篡改與防彈票細節：</p>
+                             <p><strong>1. 嚴禁留白空隙：</strong>書寫中文大寫（如壹貳參肆）或英文金額時，字與字之間切勿留有過大空格。英字開頭應盡量緊靠左邊的「Say」，防止他人惡意在前面添加諸如 'Ninety' 等單詞來放大金額。</p>
+                             <p><strong>2. 支票劃線與 A/C Payee Only 的用意：</strong>若希望該筆款項安全存入指定收款人賬戶而不可提取現金，必須在支票左上角劃上兩條平行斜線（Crossed Cheque），並將右側的「或持票人 (or Bearer)」劃線刪除。</p>
+                             <p><strong>3. 大寫結尾格式：</strong>英文金額尾部必須加上 <strong>"Only"</strong>（例如 <em>One Hundred Only</em>），而中文金額結尾則必須加上 <strong>"整"</strong> 或 <strong>"正"</strong>。這在法律上代表金額數值到此為止，杜絕在小數點後被動手腳的資安漏洞。</p>
+                             <h3>🔍 常見支票金額英文大寫範例</h3>
+                             <p>如果您不確定寫法，可參考以下會計常用的標準英文字元對照：<br>
+                             • $400: Four Hundred Only<br>
+                             • $1,500: One Thousand Five Hundred Only<br>
+                             • $10,250.50: Ten Thousand Two Hundred And Fifty And Cents Fifty Only</p>`
+            },
+            canton: {
+                navTitle: "香港支票助手",
+                toolTitle: "寫支票金額轉換器 (一撳即轉)",
+                toolDesc: "唔使搵按鈕撳，你一入數字下面個張「支票」就會即刻自動變字",
+                inputLabel: "喺下面入金額 (HKD $)",
+                liveStatus: "⚡ 幫緊你幫緊你<br>自動計緊出黎",
+                secTitle: "🔒 放心！啲數絕對唔會上傳，100% 安全",
+                secDesc: "呢個工具係純前端運算，你入嘅所有錢、數字，全部只會留喺你部電話或者電腦入面。商業保密一流！",
+                tableTitle: "🔤 香港銀行標準中文大寫字對照（費事寫錯筆劃）",
+                disTitle: "⚠️ 免責聲明：",
+                disDesc: "呢個工具計出黎嘅結果只係畀大家對稿參考。各位老細簽支票之前，記得自己望多兩眼。如果因為寫錯字俾銀行彈票或者有任何損失，本站係無辦法負責任架。親！",
+                moreToolsTitle: "仲有咩好用架生？",
+                btnClear: "一嘢清空",
+                alertValid: "喂老細，入番個有效嘅數字先得架",
+                alertMax: "呢個數太大啦，天文數字系統處理唔到",
+                alertNegative: "金額唔可以係負數啊",
+                seoContent: `<h3>💡 寫香港銀行支票有咩要留意？費事被彈票！</h3>
+                             <p>無論你係幫公司開公數，定係老細出花紅畀員工，寫支票寫錯一個字，去到櫃檯就會被彈票。以下幾點本地會計師開票秘訣一定要記住：</p>
+                             <p><strong>1. 唔好留位畀人加字：</strong>寫英文或者中文大寫個陣，字同字之間要密，開頭一定要靠左寫。如果唔係，俾人喺前面加個 'Ninety'（九萬）或者喺中文前面加多個「玖」字，公司就會損失慘重。</p>
+                             <p><strong>2. 記得劃線（Crossed）：</strong>唔想俾人執到張支票直接當現金攞走？記得喺支票左上角打兩條斜線，再用筆劃走「或持票人 (or Bearer)」，咁張支票就一定要入落指定人嘅銀行戶口，安全系數最高。</p>
+                             <p><strong>3. 尾門一定要鎖死：</strong>英文金額寫完，手尾一定要加個 <strong>"Only"</strong>；中文大寫（好似壹仟圓）後面，一定要加 <strong>"整"</strong> 或者 <strong>"正"</strong> 字。目的就係話畀銀行聽：個金額到呢度就完！</p>`
+            },
+            en: {
+                navTitle: "SmartCHQ",
+                toolTitle: "Cheque Value Converter (Number to Text)",
+                toolDesc: "No convert button required, real-time sync while typing.",
+                inputLabel: "Enter Amount (HKD $)",
+                liveStatus: "⚡ Syncing Live<br>Real-time Calculation",
+                secTitle: "Zero Data Upload • 100% Privacy Guaranteed",
+                secDesc: "This utility operates completely on the client-side (inside your browser). The financial figures you input are never transmitted to our servers.",
+                tableTitle: "🔤 Standard Bank Chinese Character Reference",
+                disTitle: "⚠️ Disclaimer:",
+                disDesc: "The outputs provided by this converter are for reference purposes only. Users are fully responsible for verifying details before issuing any cheque. We accept no liabilities for rejected cheques or any financial loss.",
+                moreToolsTitle: "More Utilities",
+                btnClear: "Clear",
+                alertValid: "Please enter a valid numeric value.",
+                alertMax: "The amount is too large for secure processing.",
+                alertNegative: "Amount cannot be a negative value.",
+                seoContent: `<h3>✍️ Essential Tips for Writing a Check in Hong Kong</h3>
+                             <p>When issuing a personal or corporate bank cheque in Hong Kong, the written text must precisely match the numerical amount to comply with clearing standards set by major banks like HSBC, HKMA, and Standard Chartered.</p>
+                             <p><strong>1. Eliminate Gaps to Prevent Alterations:</strong> Always start writing your words (e.g., 'One Thousand...') as far left as possible right after the pre-printed 'Say'. Do not leave large spaces between words; this effectively stops malicious actors from inserting words like 'Ninety' to inflate the check value.</p>
+                             <p><strong>2. Understanding Crossed Cheques:</strong> If you intend to mandate that the funds be deposited directly into the payee's bank account rather than being cashed over the counter, draw two parallel lines on the top-left corner and firmly cross out 'or Bearer'.</p>
+                             <p><strong>3. Secure Suffixes:</strong> Always suffix your English amount with <strong>"Only"</strong> and your Chinese traditional text with <strong>"整"</strong>. This legally closes the statement, meaning no further digits can be appended at the end.</p>`
+            }
+        };
+
+        let currentLang = 'zh';
+
+        function switchLang(lang) {
+            currentLang = lang;
+            const data = langData[lang];
+            
+            document.getElementById('navTitle').innerText = data.navTitle;
+            document.getElementById('toolTitle').innerText = data.toolTitle;
+            document.getElementById('toolDesc').innerText = data.toolDesc;
+            document.getElementById('inputLabel').innerText = data.inputLabel;
+            document.getElementById('liveStatus').innerHTML = data.liveStatus;
+            document.getElementById('secTitle').innerText = data.secTitle;
+            document.getElementById('secDesc').innerText = data.secDesc;
+            document.getElementById('seoContent').innerHTML = data.seoContent;
+            document.getElementById('tableTitle').innerText = data.tableTitle;
+            document.getElementById('disTitle').innerText = data.disTitle;
+            document.getElementById('disDesc').innerText = data.disDesc;
+            document.getElementById('moreToolsTitle').innerText = data.moreToolsTitle;
+            document.getElementById('btnClear').innerText = data.btnClear;
+
+            ['zh', 'canton', 'en'].forEach(l => {
+                const btn = document.getElementById(`btn-${l}`);
+                if (l === lang) {
+                    btn.className = 'px-3 py-1.5 rounded bg-white text-blue-600 transition';
+                } else {
+                    btn.className = 'px-3 py-1.5 rounded text-white hover:bg-blue-600 transition';
+                }
+            });
+
+            convertCurrency();
+        }
+
+        function convertCurrency() {
+            const rawInput = document.getElementById('numInput').value;
+            if (!rawInput) {
+                document.getElementById('previewEn').innerText = "---";
+                document.getElementById('previewZh').innerText = "---";
+                return;
+            }
+            if (isNaN(rawInput)) { return; }
+            const num = parseFloat(rawInput);
+            if (num > 999999999999 || num < 0) {
+                document.getElementById('previewEn').innerText = "---";
+                document.getElementById('previewZh').innerText = "---";
+                return;
+            }
+            document.getElementById('previewEn').innerText = numberToEnglishCheque(num);
+            document.getElementById('previewZh').innerText = numberToChineseCheque(num);
+        }
+
+        function quickAppend(val) {
+            const input = document.getElementById('numInput');
+            let current = parseFloat(input.value) || 0;
+            input.value = (current + val).toFixed(2);
+            convertCurrency();
+        }
+
+        function quickDoubleZero() {
+            const input = document.getElementById('numInput');
+            if(!input.value) return;
+            let current = parseFloat(input.value);
+            input.value = Math.floor(current).toFixed(2);
+            convertCurrency();
+        }
+
+        function quickClear() {
+            document.getElementById('numInput').value = '';
+            convertCurrency();
+        }
+
+        function numberToEnglishCheque(num) {
+            const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+            const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+            let str = '';
+            let cents = Math.round((num % 1) * 100);
+            let n = Math.floor(num);
+            if (n === 0 && cents === 0) return 'Zero Only';
+            function convertHundreds(amount) {
+                let current = '';
+                if (amount >= 100) { current += ones[Math.floor(amount / 100)] + ' Hundred '; amount %= 100; if (amount > 0) current += 'And '; }
+                if (amount >= 20) { current += tens[Math.floor(amount / 10)] + ' '; amount %= 10; }
+                if (amount > 0) { current += ones[amount] + ' '; }
+                return current;
+            }
+            if (Math.floor(n / 1000000000) > 0) { str += convertHundreds(Math.floor(n / 1000000000)) + 'Billion '; n %= 1000000000; }
+            if (Math.floor(n / 1000000) > 0) { str += convertHundreds(Math.floor(n / 1000000)) + 'Million '; n %= 1000000; }
+            if (Math.floor(n / 1000) > 0) { str += convertHundreds(Math.floor(n / 1000)) + 'Thousand '; n %= 1000; }
+            if (n > 0) { str += convertHundreds(n); }
+            if (cents > 0) {
+                if (str !== '') { str += 'And Cents ' + convertHundreds(cents); }
+                else { str += 'Cents ' + convertHundreds(cents); }
+            }
+            return str.trim() + ' Only';
+        }
+
+        function numberToChineseCheque(num) {
+            const fraction = ['角', '分'];
+            const digit = ['零', '壹', '貳', '參', '肆', '伍', '陸', '柒', '捌', '玖'];
+            const unit = [['圓', '萬', '億'], ['', '拾', '佰', '仟']];
+            let s = '';
+            let n = Math.abs(num);
+            let decimalPart = '';
+            let d = Math.round((n % 1) * 100);
+            if(d > 0) {
+                let jiao = Math.floor(d / 10); let fen = d % 10;
+                if(jiao > 0) decimalPart += digit[jiao] + fraction[0];
+                if(fen > 0) decimalPart += digit[fen] + fraction[1];
+            }
+            let integerPart = Math.floor(n);
+            for (let i = 0; i < unit[0].length && integerPart > 0; i++) {
+                let p = '';
+                for (let j = 0; j < unit[1].length && n > 0; j++) { p = digit[integerPart % 10] + unit[1][j] + p; integerPart = Math.floor(integerPart / 10); }
+                s = p.replace(/(零.)*零$/, '').replace(/^$/, '零') + unit[0][i] + s;
+            }
+            s = s.replace(/(零.)*零圓/, '圓').replace(/(零.)+/g, '零');
+            if (s == '') s = '零圓';
+            if (decimalPart == '') { s = '港幣' + s + '整'; } else { s = '港幣' + s + decimalPart; }
+            return s;
+        }
+
+        function copyText(elementId, btnId) {
+            const text = document.getElementById(elementId).innerText;
+            if(text === '---') return;
+            const originalBtnText = document.getElementById(btnId).innerText;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                document.getElementById(btnId).innerText = "✓ Copied!";
+                document.getElementById(btnId).className = "bg-green-600 text-white font-medium py-1 px-3 rounded border border-green-700 transition text-[11px]";
+                
+                setTimeout(() => {
+                    document.getElementById(btnId).innerText = originalBtnText;
+                    document.getElementById(btnId).className = "bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium py-1 px-3 rounded border border-blue-200 transition text-[11px]";
+                }, 1500);
+            });
+        }
+
+        window.onload = function() { switchLang('zh'); }
+    </script>
+</body>
+</html>
